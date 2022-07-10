@@ -128,3 +128,8 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           console.error(error);
         });
 }
+
+var theLokasi=document.getElementById('btnLokasi')
+        theLokasi.addEventListener('click',function(){
+            window.open('http://maps.google.com/?q='+document.getElementById('lokasi').value, '_blank')
+        })

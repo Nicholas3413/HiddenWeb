@@ -298,6 +298,9 @@ function inittable(obj=null,tahun,bulan,tanggal){
                       textRow.appendChild(textRowData5);
                       }else{let textRowData5=document.createElement('td');
             textRowData5.innerHTML=lamasuk+","+lomasuk
+                            
+        textRowData5.addEventListener('click',function(){
+                            window.open('http://maps.google.com/?q='+lamasuk+","+lomasuk, '_blank')})
            textRow.appendChild(textRowData5);
                            if(lamasuk>=obj["loclamin"]&&lamasuk<=obj["loclapos"]&&lomasuk>=obj["loclongmin"]&&lomasuk<=obj["loclongpos"]){
                                textRowData5.classList.add('text-success')
@@ -319,6 +322,8 @@ function inittable(obj=null,tahun,bulan,tanggal){
                       textRow.appendChild(textRowData6);
                       }else{let textRowData6=document.createElement('td');
             textRowData6.innerHTML=lakeluar+","+lokeluar
+                            textRowData6.addEventListener('click',function(){
+                            window.open('http://maps.google.com/?q='+lakeluar+","+lokeluar, '_blank')})
            textRow.appendChild(textRowData6);
                            if(lakeluar>=obj["loclamin"]&&lakeluar<=obj["loclapos"]&&lokeluar>=obj["loclongmin"]&&lokeluar<=obj["loclongpos"]){
                                textRowData6.classList.add('text-success')

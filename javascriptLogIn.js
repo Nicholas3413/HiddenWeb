@@ -74,16 +74,15 @@ var theButton=document.getElementById('btnEmail')
                     const uid = user.uid;
                       
                       console.log(uid)
-                    get(child(dbRef, `users/${uid}/perusahaan_id`)).then((snapshot) => {
-                      if (snapshot.exists()) {
+                    get(child(dbRef, `users/${uid}/user_role`)).then((snapshot) => {
+                      if (snapshot.val()==="pemilik") {
                           console.log(snapshot.val());
                           console.log("Selamat datang");
                           createCookie("uid",uid,30)
 //                          window.open('dashboard.html');
                           window.location.href='./dashboard.html';
                       } else {
-                        console.log("No data available");
-                        console.log("Bukan Pemilik Perusahaan");
+                        alert("Bukan Akun Pemilik Perusahaan");
                       }
                     }).catch((error) => {
                       console.error(error);
@@ -95,7 +94,7 @@ var theButton=document.getElementById('btnEmail')
                 });
               })
               .catch((error) => {
-                alert("gagal");
+                alert("Login gagal, silakan cek kembali data isian");
                 const errorCode = error.code;
                 const errorMessage = error.message;
               });
