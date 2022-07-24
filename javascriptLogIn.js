@@ -46,8 +46,26 @@ get(child(dbRef, `timestamp`)).then((snapshot) => {
 }).catch((error) => {
   console.error(error);
 });
+
+//remember me
+const uid=readCookie("uid");
+console.log("cek "+uid)
+if(uid!==""){
+    get(child(dbRef, `users/${uid}/user_role`)).then((snapshot) => {
+      if (snapshot.val()==="pemilik") {
+          console.log(snapshot.val());
+          console.log("Selamat datang");
+          createCookie("uid",uid,30)
+          window.location.href='./dashboard.html';
+      } else {
+
+      }
+    });
+}
+
 var theButton=document.getElementById('btnEmail')
         theButton.addEventListener('click',function(){
+             
 //            const auth = getAuth();
 //            console.log(etxtemail.value,etxtpassword.value)
 //            signInWithEmailAndPassword(auth, etxtemail.value, etxtpassword.value)
@@ -76,6 +94,9 @@ var theButton=document.getElementById('btnEmail')
                       console.log(uid)
                     get(child(dbRef, `users/${uid}/user_role`)).then((snapshot) => {
                       if (snapshot.val()==="pemilik") {
+                          if (document.getElementById('rememberme').checked) {
+                                createCookieLogin("uid",uid,30)
+                            }
                           console.log(snapshot.val());
                           console.log("Selamat datang");
                           createCookie("uid",uid,30)
@@ -107,4 +128,26 @@ function createCookie(fieldname, fieldvalue, expiry) {
     document.cookie = fieldname + "=" + fieldvalue + 
                       ";" + expires + ";path=/dashboard.html";
 }
-
+function createCookieLogin(fieldname, fieldvalue, expiry) {
+    var date = new Date();
+    date.setTime(date.getTime()+ (expiry*24*60*60*1000));
+    var expires = "expires=" + date.toGMTString();
+    document.cookie = fieldname + "=" + fieldvalue + 
+                      ";" + expires + ";path=/";
+}
+    
+function readCookie(cname) {
+    var name = cname + "=";
+    var decoded_cookie = decodeURIComponent(document.cookie);
+    var carr = decoded_cookie.split(';');
+    for(var i=0; i<carr.length;i++){
+    var c = carr[i];
+    while(c.charAt(0)==' '){
+        c=c.substring(1);
+    }
+    if(c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+    }
+     }
+     return "";
+}

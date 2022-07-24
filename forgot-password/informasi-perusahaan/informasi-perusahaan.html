@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>Dashboard Template · Bootstrap v5.0</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+      body{
+        background-color: #FCBF87;
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="dashboard.css" rel="stylesheet">
+  </head>
+  <body>
+
+<script language="JavaScript">
+  var tanggallengkap = new String();
+  var namahari = ("Minggu Senin Selasa Rabu Kamis Jumat Sabtu");
+  namahari = namahari.split(" ");
+  var namabulan = ("Januari Februari Maret April Mei Juni Juli Agustus September Oktober November Desember");
+  namabulan = namabulan.split(" ");
+  var tgl = new Date();
+  var hari = tgl.getDay();
+  var tanggal = tgl.getDate();
+  var bulan = tgl.getMonth();
+  var tahun = tgl.getFullYear();
+  tanggallengkap = namahari[hari] + ", " +tanggal + " " + namabulan[bulan] + " " + tahun;
+  </script>
+
+<span id='jam' ></span> | <script language='JavaScript'>document.write(tanggallengkap);</script>
+<br>
+<h1 style="color: white; font-weight: bold;">Welcome Admin</h1>
+<a href="#" style="text-decoration: underline; color: white;">PT. Hidden Jaya Makmur</a>
+
+<div class="container rounded mt-5 mb-5" style="background-color: #FCBF87;">
+    <div class="row">
+        <div class="col-md-3 border-right">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">PT. Hidden Jaya Makmur</span><span class="text-black-50">PT.HiddenJayaMakmur@gmail.com</span><span> </span></div>
+        </div>
+        <div class="col-md-5 border-right">
+            <div class="p-3 py-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="text-right">Profile Settings</h4>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12"><label class="labels">Nama Pemilik</label><input type="text" class="form-control" value=""></div>
+                    <div class="col-md-12"><label class="labels">Alamat</label><input type="text" class="form-control" value=""></div>
+                    <div class="col-md-12"><label class="labels">Nomor Handphone</label><input type="text" class="form-control" value=""></div>
+                    <div class="col-md-12"><label class="labels">Email</label><input type="text" class="form-control" value=""></div>
+                    <div class="col-md-12"><label class="labels">Tahun Berdiri</label><input type="text" class="form-control" value=""></div>
+                    <div class="col-md-12"><label class="labels">Bidang</label><input type="text" class="form-control" value=""></div>
+                </div>
+                <div class="mt-5 text-center">
+                    <button onclick="window.location.href='../dashboard/dashboard.html';" type="submit" class="btn btn-primary profile-button" type="button" style="background-color: white; color: black; float: right;">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+  <img src="../assets/brand/LogoHidden.png" alt="Img" height="200" width="300">
+</footer>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
+      <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script><script src="dashboard.js"></script>
+  </body>
+</html>

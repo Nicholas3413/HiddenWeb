@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-app.js";
 import { getDatabase, ref, onValue, child, get,update } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-database.js";
 import { getAuth,signInWithEmailAndPassword,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-auth.js";
+import { getStorage, ref as refx, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.8.4/firebase-storage.js"
+//import { getStorage, ref } from "firebase/storage"
 //const uid = require('./javascript.js');
 
 const firebaseConfig = {
@@ -42,32 +44,35 @@ function createCookie(fieldname, fieldvalue, expiry) {
 }
 
 console.log(readCookie("uid"))
-const uid=readCookie("uid")
+//const uid=readCookie("uid")
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
-//const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
+const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
 
 loaddata(obj)
 var date = new Date();
 document.getElementById("timepickermasuk").value=date.getHours().toString().padStart(2, 0) + ':' + date.getMinutes().toString().padStart(2, 0)
-
+hideshowinputupload()
 console.log(document.getElementById("timepickermasuk").value)
 var theButton=document.getElementById('btnEdit')
         theButton.addEventListener('click',function(){
             if(theButton.innerHTML==="Edit"){
                 theButton.innerHTML="Ok"
                 document.getElementById('myfield').disabled=false
+                hideshowinputupload()
             }
             else{
                 theButton.innerHTML="Edit"
+                hideshowinputupload()
                 document.getElementById('myfield').disabled=true
                 var myModal = new bootstrap.Modal(document.getElementById('exampleModal'))
                 myModal.show()
                 document.getElementById('batalsimpan').addEventListener('click',function(){
                     loaddata(obj)
+                    document.getElementById("upload").value=null
                 })
                 document.getElementById('xsimpan').addEventListener('click',function(){
                     loaddata(obj)
-                    
+                    document.getElementById("upload").value=null
                 })
                 document.getElementById('oksimpan').addEventListener('click',function(){
                     
@@ -88,8 +93,45 @@ var theButton=document.getElementById('btnEdit')
                           updates['/perusahaan/' +snapshot.val()+ '/menit_masuk'] = masuk[1]                          
                           updates['/perusahaan/' +snapshot.val()+ '/jam_pulang'] = keluar[0]
                           updates['/perusahaan/' +snapshot.val()+ '/menit_pulang'] = keluar[1]
-                          
-                        update(ref(db), updates);
+                          if(document.getElementById("upload").value.toString()!=""){
+                              const storage = getStorage();
+                            const storageRef = refx(storage, "perusahaan/"+uid+"/gambar.jpg");
+                              const file = document.getElementById('upload').files[0];
+                              
+                            const uploadTask = uploadBytesResumable(storageRef,file);
+                            uploadTask.on('state_changed', 
+                              (snapshot) => {
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                console.log('Upload is ' + progress + '% done');
+                                switch (snapshot.state) {
+                                  case 'paused':
+                                    console.log('Upload is paused');
+                                    break;
+                                  case 'running':
+                                    console.log('Upload is running');
+                                    break;
+                                }
+                              }, 
+                              (error) => {
+                                // Handle unsuccessful uploads
+                              }, 
+                              () => {
+                                // Handle successful uploads on complete
+                                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                  console.log('File available at', downloadURL);
+                                    updates['/perusahaan/' +snapshot.val()+ '/gambar_perusahaan']=downloadURL
+                                    update(ref(db), updates);
+                                });
+                              }
+                            );
+                              
+                              document.getElementById("upload").value=null
+                          }else{
+                              document.getElementById("upload").value=null
+                              update(ref(db), updates);
+                          }
+                        
                       }})
                     
                 })
@@ -133,3 +175,23 @@ var theLokasi=document.getElementById('btnLokasi')
         theLokasi.addEventListener('click',function(){
             window.open('http://maps.google.com/?q='+document.getElementById('lokasi').value, '_blank')
         })
+
+function getBase64Image(img) {
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+  var dataURL = canvas.toDataURL("image/png");
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+
+function hideshowinputupload() {
+  let x = document.getElementById("upload");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
