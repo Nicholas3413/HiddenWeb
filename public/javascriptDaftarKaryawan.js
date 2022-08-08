@@ -40,6 +40,20 @@ function createCookie(fieldname, fieldvalue, expiry) {
     document.cookie = fieldname + "=" + fieldvalue + 
                       ";" + expires + ";path=/informasi-perusahaan.html";
 }
+function createCookieAnggota(fieldname, fieldvalue, expiry) {
+    var date = new Date();
+    date.setTime(date.getTime()+ (expiry*24*60*60*1000));
+    var expires = "expires=" + date.toGMTString();
+    document.cookie = fieldname + "=" + fieldvalue + 
+                      ";" + expires + ";path=/informasi-karyawan.html";
+}
+function createCookieRekap(fieldname, fieldvalue, expiry) {
+    var date = new Date();
+    date.setTime(date.getTime()+ (expiry*24*60*60*1000));
+    var expires = "expires=" + date.toGMTString();
+    document.cookie = fieldname + "=" + fieldvalue + 
+                      ";" + expires + ";path=/rekap-absensi.html";
+}
 
 var date = new Date();
 
@@ -72,11 +86,16 @@ document.getElementById('signout').addEventListener('click',function(){
     const auth = getAuth();
     signOut(auth).then(() => {
 
-        expireAllCookies('uid', ['/', '/dashboard.html','/informasi-perusahaan.html','/index.html','/daftar-karyawan.html']);
+        expireAllCookies('uid', ['/', '/dashboard.html','/informasi-perusahaan.html','/index.html','/daftar-karyawan.html','/informasi-karyawan.html','/rekap-absensi.html']);
+        expireAllCookies('auid', ['/informasi-karyawan.html']);
        window.location.href='./index.html';
     }).catch((error) => {
       // An error happened.
     });
+})
+document.getElementById('rekapabsensi').addEventListener('click',function(){
+    createCookieRekap("uid",uid,30)
+    window.location.href='./rekap-absensi.html';
 })
 function expireAllCookies(name, paths) {
     var expires = new Date(0).toUTCString();
@@ -120,6 +139,15 @@ function inittable(obj=null){
               let tempjabatan=obj[idcurrentanggota]["bagian"];
             textRowData4.innerHTML=tempjabatan;
               textRow.appendChild(textRowData4);
+                tbody.appendChild(textRow);
+              
+              let textRowData5=document.createElement('td');
+            textRowData5.addEventListener('click',function(){
+                createCookieAnggota("auid",iduser,30)
+                createCookieAnggota("uid",uid,30)
+            window.open('./informasi-karyawan.html', '_blank')})
+            textRowData5.innerHTML="Info";
+              textRow.appendChild(textRowData5);
                 tbody.appendChild(textRow);
               
 //            get(child(dbRef, `users/${iduser}`)).then((snapshot) => {

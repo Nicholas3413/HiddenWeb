@@ -44,9 +44,9 @@ function createCookie(fieldname, fieldvalue, expiry) {
 }
 
 console.log(readCookie("uid"))
-//const uid=readCookie("uid")
+const uid=readCookie("uid")
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
-const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
+//const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
 
 loaddata(obj)
 var date = new Date();
@@ -87,6 +87,8 @@ var theButton=document.getElementById('btnEdit')
                           updates['/perusahaan/' +snapshot.val()+ '/email_perusahaan'] = document.getElementById('emailperusahaan').value;
                           updates['/perusahaan/' +snapshot.val()+ '/tahun_berdiri'] = document.getElementById('tahunberdiri').value;
                           updates['/perusahaan/' +snapshot.val()+ '/bidang_perusahaan'] = document.getElementById('bidang').value;
+                          updates['/perusahaan/' +snapshot.val()+ '/work_hours_week'] = document.getElementById('whw').value;
+                          updates['/perusahaan/' +snapshot.val()+ '/work_hours_day'] = document.getElementById('whd').value;
                            let masuk = document.getElementById("timepickermasuk").value.split(':')
                            let keluar = document.getElementById("timepickerkeluar").value.split(':')
                           updates['/perusahaan/' +snapshot.val()+ '/jam_masuk'] = masuk[0]
@@ -158,6 +160,8 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
                   document.getElementById("txtemailperusahaan").innerHTML=snapshot.val()["email_perusahaan"]
                   document.getElementById("tahunberdiri").value=snapshot.val()["tahun_berdiri"]
                   document.getElementById("bidang").value=snapshot.val()["bidang_perusahaan"]
+                  document.getElementById("whw").value=snapshot.val()["work_hours_week"]
+                  document.getElementById("whd").value=snapshot.val()["work_hours_day"]
                   
 
                   obj=snapshot.val()
@@ -175,16 +179,6 @@ var theLokasi=document.getElementById('btnLokasi')
         theLokasi.addEventListener('click',function(){
             window.open('http://maps.google.com/?q='+document.getElementById('lokasi').value, '_blank')
         })
-
-function getBase64Image(img) {
-  var canvas = document.createElement("canvas");
-  canvas.width = img.width;
-  canvas.height = img.height;
-  var ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0);
-  var dataURL = canvas.toDataURL("image/png");
-  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-}
 
 
 function hideshowinputupload() {

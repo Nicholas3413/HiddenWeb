@@ -47,7 +47,13 @@ function createCookieCekAnggota(fieldname, fieldvalue, expiry) {
     document.cookie = fieldname + "=" + fieldvalue + 
                       ";" + expires + ";path=/daftar-karyawan.html";
 }
-
+function createCookieRekap(fieldname, fieldvalue, expiry) {
+    var date = new Date();
+    date.setTime(date.getTime()+ (expiry*24*60*60*1000));
+    var expires = "expires=" + date.toGMTString();
+    document.cookie = fieldname + "=" + fieldvalue + 
+                      ";" + expires + ";path=/rekap-absensi.html";
+}
 
 var jammasuk=new Number()
 var menitmasuk=new Number()
@@ -93,6 +99,7 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
                   workhoursweek=snapshot.val()["work_hours_week"]
                   inittable(snapshot.val(),date.getFullYear().toString(),(date.getMonth() + 1).toString().padStart(2, 0),date.getDate().toString().padStart(2, 0))
                   obj=snapshot.val()
+                  
               })
           } else {
             console.log("No data available");
@@ -107,7 +114,8 @@ document.getElementById('signout').addEventListener('click',function(){
 //        document.cookie = 'name=uid; path=/dashboard.html; expires=' + new Date(0).toUTCString();
 //        document.cookie = 'name=uid; path=/informasi-perusahaan.html; expires=' + new Date(0).toUTCString();
 //        document.cookie = 'name=uid; path=/; expires=' + new Date(0).toUTCString();
-        expireAllCookies('uid', ['/', '/dashboard.html','/informasi-perusahaan.html','/index.html','/daftar-karyawan.html']);
+        expireAllCookies('uid', ['/', '/dashboard.html','/informasi-perusahaan.html','/index.html','/daftar-karyawan.html','/informasi-karyawan.html','/rekap-absensi.html']);
+        expireAllCookies('auid', ['/informasi-karyawan.html']);
        window.location.href='./index.html';
     }).catch((error) => {
       // An error happened.
@@ -116,6 +124,10 @@ document.getElementById('signout').addEventListener('click',function(){
 document.getElementById('cekanggota').addEventListener('click',function(){
     createCookieCekAnggota("uid",uid,30)
     window.location.href='./daftar-karyawan.html';
+})
+document.getElementById('rekapabsensi').addEventListener('click',function(){
+    createCookieRekap("uid",uid,30)
+    window.location.href='./rekap-absensi.html';
 })
 function expireAllCookies(name, paths) {
     var expires = new Date(0).toUTCString();
@@ -294,7 +306,7 @@ function inittable(obj=null,tahun,bulan,tanggal){
                 
             textRowData3.innerHTML=date.getHours().toString().padStart(2, 0)+":"+date.getMinutes().toString().padStart(2, 0)+":"+date.getSeconds().toString().padStart(2, 0);
            textRow.appendChild(textRowData3);
-                          if((date.getHours()*60+date.getMinutes())*60+date.getSeconds()<=(jammasuk*60+menitmasuk)*60){
+                          if((date.getHours()*60+date.getMinutes())*60+date.getSeconds()<=(parseInt(jammasuk,10)*60+parseInt(menitmasuk,10))*60){
                               textRowData3.classList.add('text-success')
                           }else{
                               textRowData3.classList.add('text-danger')
@@ -318,7 +330,7 @@ function inittable(obj=null,tahun,bulan,tanggal){
             textRowData4.innerHTML=date2.getHours().toString().padStart(2, 0)+":"+date2.getMinutes().toString().padStart(2, 0)+":"+date2.getSeconds().toString().padStart(2, 0);
            textRow.appendChild(textRowData4);
                           
-                          if((date2.getHours()*60+date2.getMinutes())*60+date2.getSeconds()>=(jamkeluar*60+menitkeluar)*60){
+                          if((date2.getHours()*60+date2.getMinutes())*60+date2.getSeconds()>=(parseInt(jamkeluar,10)*60+parseInt(menitkeluar,10))*60){
                               textRowData4.classList.add('text-success')
                           }else{
                               textRowData4.classList.add('text-danger')

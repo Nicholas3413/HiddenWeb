@@ -2,7 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.4/firebase
 import { getDatabase, ref, onValue, child, get} from "https://www.gstatic.com/firebasejs/9.8.4/firebase-database.js";
 import { getAuth,signInWithEmailAndPassword,onAuthStateChanged ,signOut} from "https://www.gstatic.com/firebasejs/9.8.4/firebase-auth.js";
 //const uid = require('./javascript.js');
-
+//import {moment} from "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"
+moment.locale('en-gb')
 const firebaseConfig = {
     apiKey: "AIzaSyAIWfQR-drjCNvbgTIcY7FnfLXDdwx9nn0",
     authDomain: "hidden-ad93d.firebaseapp.com",
@@ -16,7 +17,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const dbRef = ref(getDatabase(app));
-var obj={}
+//var obj={}
+var selected=["0","0","0","0"];
+var listuid = [];
+var hari=["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"]
 
 function readCookie(cname) {
     var name = cname + "=";
@@ -47,13 +51,7 @@ function createCookieCekAnggota(fieldname, fieldvalue, expiry) {
     document.cookie = fieldname + "=" + fieldvalue + 
                       ";" + expires + ";path=/daftar-karyawan.html";
 }
-function createCookieRekap(fieldname, fieldvalue, expiry) {
-    var date = new Date();
-    date.setTime(date.getTime()+ (expiry*24*60*60*1000));
-    var expires = "expires=" + date.toGMTString();
-    document.cookie = fieldname + "=" + fieldvalue + 
-                      ";" + expires + ";path=/rekap-absensi.html";
-}
+
 
 var jammasuk=new Number()
 var menitmasuk=new Number()
@@ -61,21 +59,36 @@ var jamkeluar=new Number()
 var menitkeluar=new Number()
 var workhoursday=new Number()
 var workhoursweek=new Number()
+var loclamin=new Number()
+var loclapos=new Number()
+var loclongmin=new Number()
+var loclongpos=new Number()
+var totalwaktukerjaminggu= new Number()
 
 var date = new Date();
+
 document.getElementById("datepicker").value=date.getFullYear().toString() + '-' + (date.getMonth() + 1).toString().padStart(2, 0) +
     '-' + date.getDate().toString().padStart(2, 0);
+selected[1]=date.getFullYear().toString();
+selected[2]=(date.getMonth() + 1).toString().padStart(2, 0);
+selected[3]=date.getDate().toString().padStart(2, 0);
+console.log(selected)
 document.getElementById("datepicker").onchange = function(){
     var date=document.getElementById("datepicker").value
     var arr1 = date.split('-');
-    console.log(arr1[2])
+    console.log(arr1)
+    selected[1]=arr1[0];
+    selected[2]=arr1[1];
+    selected[3]=arr1[2];
+    console.log(selected)
+    
     let tbody = document.getElementById("dataabsensi");
       var rowCount = tbody.rows.length;
     for (var x=rowCount-1; x>=0; x--) {
        tbody.deleteRow(x);
     }
-    console.log(obj)
-    inittable(obj,arr1[0],arr1[1],arr1[2])
+    inittable()
+//    inittable(obj,arr1[0],arr1[1],arr1[2])
 };
 console.log(readCookie("uid"))
 const uid=readCookie("uid")
@@ -89,17 +102,21 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           if (snapshot.exists()) {
               console.log(snapshot.val()["user_name"]);
               document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
+              get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/nama_perusahaan`)).then((snapshot) => {
+                  document.getElementById("namaperusahaan").innerHTML=snapshot.val()
+              })
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}`)).then((snapshot) => {
-                  document.getElementById("namaperusahaan").innerHTML=snapshot.val()["nama_perusahaan"]
                   jammasuk=snapshot.val()["jam_masuk"]
                   jamkeluar=snapshot.val()["jam_pulang"]
                   menitmasuk=snapshot.val()["menit_masuk"]
                   menitkeluar=snapshot.val()["menit_pulang"]
                   workhoursday=snapshot.val()["work_hours_day"]
                   workhoursweek=snapshot.val()["work_hours_week"]
-                  inittable(snapshot.val(),date.getFullYear().toString(),(date.getMonth() + 1).toString().padStart(2, 0),date.getDate().toString().padStart(2, 0))
-                  obj=snapshot.val()
-                  
+                  loclamin=snapshot.val()["loclamin"]
+                  loclapos=snapshot.val()["loclapos"]
+                  loclongmin=snapshot.val()["loclongmin"]
+                  loclongpos=snapshot.val()["loclongpos"]
+                  initli(snapshot.val()["anggota"])
               })
           } else {
             console.log("No data available");
@@ -107,6 +124,7 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
         }).catch((error) => {
           console.error(error);
         });
+
 document.getElementById('signout').addEventListener('click',function(){
     const auth = getAuth();
     signOut(auth).then(() => {
@@ -116,19 +134,12 @@ document.getElementById('signout').addEventListener('click',function(){
 //        document.cookie = 'name=uid; path=/; expires=' + new Date(0).toUTCString();
         expireAllCookies('uid', ['/', '/dashboard.html','/informasi-perusahaan.html','/index.html','/daftar-karyawan.html','/informasi-karyawan.html','/rekap-absensi.html']);
         expireAllCookies('auid', ['/informasi-karyawan.html']);
-       window.location.href='./index.html';
+        window.location.href='./index.html';
     }).catch((error) => {
       // An error happened.
     });
 })
-document.getElementById('cekanggota').addEventListener('click',function(){
-    createCookieCekAnggota("uid",uid,30)
-    window.location.href='./daftar-karyawan.html';
-})
-document.getElementById('rekapabsensi').addEventListener('click',function(){
-    createCookieRekap("uid",uid,30)
-    window.location.href='./rekap-absensi.html';
-})
+
 function expireAllCookies(name, paths) {
     var expires = new Date(0).toUTCString();
 
@@ -138,199 +149,128 @@ function expireAllCookies(name, paths) {
     for (var i = 0, l = paths.length; i < l; i++) {
         document.cookie = name + '=; path=' + paths[i] + '; expires=' + expires;
     }
-}
-
-
-//get(child(dbRef, `${uid}/perusahaan_id`)).then((snapshot) => {
-//  if (snapshot.exists()) {
-//      const perusahaanID=snapshot.val()
-//      document.getElementById("kodePerusahaan").innerHTML=perusahaanID
-//      console.log(snapshot.val());
-//      get(child(dbRef, `${perusahaanID}/`)).then((snapshot) => {
-//          if (snapshot.exists()) {
-//              obj=snapshot.val()
-//              inittable(obj["absensi"])
-//              console.log(obj)
-////              console.log(snapshot.nama_perusahaan);
-//               console.log(snapshot.val()["anggota"]);
-//              document.getElementById("namaPerusahaan").innerHTML=snapshot.val()["nama_perusahaan"]
-//              document.getElementById("anggotaList").innerHTML=JSON.stringify(snapshot.val()["anggota"])
-//
-//          } else {
-//            console.log("No data available");
-//            console.log("Bukan Pemilik Perusahaan");
-//          }
-//        }).catch((error) => {
-//          console.error(error);
-//        });
-//  } else {
-//    console.log("No data available");
-//    console.log("Bukan Pemilik Perusahaan");
-//  }
-//}).catch((error) => {
-//  console.error(error);
-//});
-//$('#datepicker').datepicker({
-//    uiLibrary: 'bootstrap'
-//});
-//$('#datepicker').datepicker()
-//    .on('changeDate', function(e) {
-//        var startdate = $('#startdate').val(); 
-//console.log(startdate)
-//    });
-// $('#datepicker').datepicker({  
-//    format: 'mm/dd/yyyy',  
-//}).on('change.dp', function() {  
-//    $('#tanggalwaktu2').val(
-//        $('#datepicker').val()
-//    );
-//}); 
-//$('#datepicker').on('change.dp', function() {
-//    $('#tanggalwaktu2').innerHTML=
-//        $('#datepicker').data('datepicker').date
-//
-//});
-//console.log($('#datepicker').datepicker("getDate").valueOf()) 
-
-
-
-function inittable(obj=null,tahun,bulan,tanggal){
-//    let table = document.createElement('table');
-//    table.setAttribute("id","initabel");
-//    let thead = document.createElement('thead');
-    let tbody = document.getElementById("dataabsensi");
-//    let tanggalharini=document.createElement('h2');
-//    let ulul=document.createElement('ul')
-    console.log(obj)
-    console.log(Object.keys(obj["anggota"]))
-//    console.log(obj["absensi"][tahun][bulan][tanggal]["AFyiZLp"]["jam_masuk"])
-
-    //const obj={"16 May 2022":{"abc":{"jam_masuk":1652660802000},"abc2":{"jam_masuk":1652660922000},"abc3":{"jam_masuk":1652660982000}},
-    //          "17 May 2022":{"abc":{"jam_masuk":1652747382000},"abc2":{"jam_masuk":1652747142000},"abc3":{"jam_masuk":1652746842000}}}
-    //
-
-//    for(let i=0; i<Object.keys(obj).length;i++){
-//        let ilil=document.createElement('li')
-//        ilil.innerHTML=Object.keys(obj)[i]
-//        ilil.id=
-//        ulul.appendChild(ilil)
-//
-//    }
-//    document.getElementById('body').appendChild(ulul);
-//    document.getElementById('body').appendChild(table);
-//    buatTabel(Object.keys(obj)[0])
     
-//    var lis = document.getElementsByTagName("li");
-//
-//    for (var i = 0 ; i < lis.length; i++) {
-//
-//        lis[i].addEventListener('click', function(event) {
-//            let temp=event.target.textContent
-//            console.log(temp)
-//
-//            var myTable = document.getElementById("initabel");
-//    var rowCount = myTable.rows.length;
-//    for (var x=rowCount-1; x>=0; x--) {
-//       myTable.deleteRow(x);
-//    }
-//
-//            buatTabel(temp);
-//        });
-//
-//    }
-//    console.log(Object.keys(obj)[0]);
-//    console.log(Object.keys(obj).length);
-    // Adding the entire table to the body tag
+}
+function initli(obj=null){
+    var ul = document.getElementById("daftaranggota");
+    console.log(obj)
+    for(let i=0;i<Object.keys(obj).length;i++){
+        
+        
+        listuid[i]=obj[Object.keys(obj)[i]]["user_id"]
+        get(child(dbRef, `users/${obj[Object.keys(obj)[i]]["user_id"]}/user_name`)).then((snapshot) => {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(snapshot.val()+" ("+obj[Object.keys(obj)[i]]["bagian"]+")"));
+            ul.appendChild(li);
+            if(i+1===Object.keys(obj).length){
+                console.log(listuid)
+            const ulList = document.getElementById("daftaranggota");
+            li = document.getElementsByTagName('li');
+            var nodes = Array.from( ulList.children );
+            let select = -1;
+            var c = document.getElementById("daftaranggota").childNodes;
+            c[1].style.backgroundColor = "yellow";
+            document.getElementById("daftaranggota").addEventListener("click",function(e) {
+                    if(select===-1){
+                        c[1].style.backgroundColor = "";
+                    }else{
+                        c[select+1].style.backgroundColor = "";
+                    }
 
+                    if (select !== nodes.indexOf(e.target)) {
+                        selected[0]=nodes.indexOf(e.target)
 
-//    function buatTabel(tanggal=null){
-//        document.getElementById('body').appendChild(tanggalharini);
-//        document.getElementById('body').appendChild(table);
-//        table.appendChild(thead);
-//        table.appendChild(tbody);
-//        tanggalharini.innerHTML=tanggal;
-//
-//
-//        let row_1 = document.createElement('tr');
-//        let heading_1 = document.createElement('th');
-//        heading_1.innerHTML = "No.";
-//        let heading_2 = document.createElement('th');
-//        heading_2.innerHTML = "Nama";
-//        let heading_3 = document.createElement('th');
-//        heading_3.innerHTML = "Jam Masuk";
-//        row_1.appendChild(heading_1);
-//        row_1.appendChild(heading_2);
-//        row_1.appendChild(heading_3);
-    //for (let i = 0; i < Object.keys(obj).length; i++) {
-    //    let textHeading="headingx_"+(i+2)
-    //    
-    //  textHeading = document.createElement('th');
-    //    
-    //    textHeading.innerHTML = i;
-    //    row_1.appendChild(textHeading);
-    //}
-//        thead.appendChild(row_1);
+                        select = nodes.indexOf(e.target);
+                        console.log(selected[0]);
 
-//        console.log(Object.keys(obj[Object.keys(obj)[0]]).length)
-//        console.log(Object.keys(obj[Object.keys(obj)[0]])[0])
+                        c[select+1].style.backgroundColor = "yellow";
+                    } else {
+                        c[select+1].style.backgroundColor = "yellow";
+                        console.log("Already select");
+                    }
+                let tbody = document.getElementById("dataabsensi");
+                  var rowCount = tbody.rows.length;
+                for (var x=rowCount-1; x>=0; x--) {
+                   tbody.deleteRow(x);
+                }
+                inittable()
 
-    // Creating and adding data to second row of the table
-        for(let i=0;i<Object.keys(obj["anggota"]).length;i++){
-//            console.log(obj["jam_masuk"].toString().padStart(2, 0))
-            
-            let idcurrentanggota=Object.keys(obj["anggota"])[i]
-            let textRow="row_"+(i+1);
-//            console.log(textRow);
-            textRow = document.createElement('tr');
-           let textRowData1=document.createElement('td');
-            textRowData1.innerHTML=(i+1)+".";
-           textRow.appendChild(textRowData1);
-
-//            const tanggalharicek=tanggal;
-            const iduser=obj["anggota"][idcurrentanggota]["user_id"];
-            let textRowData2=document.createElement('td');
-            get(child(dbRef, `users/${iduser}/user_name`)).then((snapshot) => {
-              if (snapshot.exists()) {
-                  let tempnama=snapshot.val()
-//                  console.log(snapshot.val());
-                textRowData2.innerHTML=tempnama;
-                  textRow.appendChild(textRowData2);
-                  try{const timestamp=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["jam_masuk"];
+            });
+            inittable()
+            }
+        })
+    }
+    
+    
+}
+//function inittable(obj=null,tahun,bulan,tanggal,suid){
+function inittable(){
+    let tbody = document.getElementById("dataabsensi");
+//    var date=tahun+bulan+tanggal
+    var date=selected[1]+"-"+selected[2]+"-"+selected[3]
+    var datex=new Date(date)
+    var weeknumber = moment(datex).week();
+    console.log(weeknumber);
+    const arrdate=[]
+    const arrdate2=[]
+    totalwaktukerjaminggu=0
+      
+    
+    get(child(dbRef, `users/${listuid[selected[0]]}`)).then((snapshot) => {
+        console.log(snapshot.val()["perusahaan_id"])
+        document.getElementById("sanggota").innerHTML="("+snapshot.val()["user_name"]+")"  
+        for(let i=0;i<7;i++){
+            var test = moment().day(i+1).week(weeknumber);
+            arrdate[i]=moment(test).format('L')
+            arrdate2[i]=test
+            var arr2 = arrdate[i].split('/');
+                get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/absensi/${arr2[2]}/${arr2[1]}/${arr2[0]}/${snapshot.val()["anggota_perusahaan_id"]}`)).then((snapshot) => {
+                    let textRow="row_"+(i+1);
+                    textRow = document.createElement('tr');
+                   let textRowData1=document.createElement('td');
+                    textRowData1.innerHTML=(i+1)+".";
+                   textRow.appendChild(textRowData1);
+                   let textRowData2=document.createElement('td');
+                    textRowData2.innerHTML=hari[i]+", "+moment(arrdate2[i]).format('LL');
+                   textRow.appendChild(textRowData2);
+                    let textRowData3=document.createElement('td');
+                    try{const timestamp=snapshot.val()["jam_masuk"];
                       if(timestamp===undefined){
                           let textRowData3=document.createElement('td');
                       textRowData3.innerHTML="belum absensi masuk"
                       textRow.appendChild(textRowData3);
                       }else{
-                          var date = new Date(timestamp);
-            let textRowData3=document.createElement('td');
+                          var datetemp1 = new Date(timestamp);
+                            let textRowData3=document.createElement('td');
                 
-            textRowData3.innerHTML=date.getHours().toString().padStart(2, 0)+":"+date.getMinutes().toString().padStart(2, 0)+":"+date.getSeconds().toString().padStart(2, 0);
-           textRow.appendChild(textRowData3);
-                          if((date.getHours()*60+date.getMinutes())*60+date.getSeconds()<=(parseInt(jammasuk,10)*60+parseInt(menitmasuk,10))*60){
+                            textRowData3.innerHTML=datetemp1.getHours().toString().padStart(2, 0)+":"+datetemp1.getMinutes().toString().padStart(2, 0)+":"+datetemp1.getSeconds().toString().padStart(2, 0);
+                           textRow.appendChild(textRowData3);
+                          if((datetemp1.getHours()*60+datetemp1.getMinutes())*60+datetemp1.getSeconds()<=((parseInt(jammasuk,10)*60+parseInt(menitmasuk,10))*60)){
+                              
                               textRowData3.classList.add('text-success')
                           }else{
                               textRowData3.classList.add('text-danger')
                           }
                       }
-            }
+                    }
                   catch(e){
                       let textRowData3=document.createElement('td');
                       textRowData3.innerHTML="belum absensi masuk"
                       textRow.appendChild(textRowData3);
                   }
-                  try{const timestamp2=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["jam_keluar"];
+                  try{const timestamp2=snapshot.val()["jam_keluar"];
             
                       if(timestamp2===undefined){
                           let textRowData4=document.createElement('td');
                       textRowData4.innerHTML="belum absensi keluar"
                       textRow.appendChild(textRowData4);
                       }else{
-                          var date2 = new Date(timestamp2);
+                          var datetemp2 = new Date(timestamp2);
                           let textRowData4=document.createElement('td');
-            textRowData4.innerHTML=date2.getHours().toString().padStart(2, 0)+":"+date2.getMinutes().toString().padStart(2, 0)+":"+date2.getSeconds().toString().padStart(2, 0);
+            textRowData4.innerHTML=datetemp2.getHours().toString().padStart(2, 0)+":"+datetemp2.getMinutes().toString().padStart(2, 0)+":"+datetemp2.getSeconds().toString().padStart(2, 0);
            textRow.appendChild(textRowData4);
                           
-                          if((date2.getHours()*60+date2.getMinutes())*60+date2.getSeconds()>=(parseInt(jamkeluar,10)*60+parseInt(menitkeluar,10))*60){
+                          if((datetemp2.getHours()*60+datetemp2.getMinutes())*60+datetemp2.getSeconds()>=((parseInt(jamkeluar,10)*60+parseInt(menitkeluar,10))*60)){
                               textRowData4.classList.add('text-success')
                           }else{
                               textRowData4.classList.add('text-danger')
@@ -342,11 +282,8 @@ function inittable(obj=null,tahun,bulan,tanggal){
                       textRowData4.innerHTML="belum absensi keluar"
                       textRow.appendChild(textRowData4);
                   }
-                  
-                  ///////////waktu selisih
-                  
-                  try{const timestamp=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["jam_masuk"];
-                      const timestamp2=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["jam_keluar"];
+                    try{const timestamp=snapshot.val()["jam_masuk"];
+                      const timestamp2=snapshot.val()["jam_keluar"];
                       var date = new Date(timestamp);
                       var date2 = new Date(timestamp2);
                       console.log(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
@@ -391,11 +328,13 @@ function inittable(obj=null,tahun,bulan,tanggal){
                           if(surplustime>0){
                               let textRowData3a=document.createElement('td');
                                 Difference_In_Time=workhoursday*3600000
+                              totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
             textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600000).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60000)%60).toString().padStart(2, 0)+":"+Math.round((Difference_In_Time/1000)%60).toString().padStart(2, 0);
                           textRow.appendChild(textRowData3a);
                               textRowData3b.innerHTML=Math.floor(surplustime/3600000).toString().padStart(2, 0)+":"+Math.floor((surplustime/60000)%60).toString().padStart(2, 0)+":"+Math.round((surplustime/1000)%60).toString().padStart(2, 0);
                           }else{
                               let textRowData3a=document.createElement('td');
+                              totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
             textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600000).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60000)%60).toString().padStart(2, 0)+":"+Math.round((Difference_In_Time/1000)%60).toString().padStart(2, 0);
                           textRow.appendChild(textRowData3a);
                               textRowData3b.innerHTML="0"
@@ -423,15 +362,8 @@ function inittable(obj=null,tahun,bulan,tanggal){
                       textRowData3b.innerHTML="belum absensi masuk"
                       textRow.appendChild(textRowData3b);
                         }
-                     
-                  
-                  
-                  
-                  ///////////////////
-                  
-                  
-                  try{const lamasuk=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["lokasi_latitude_masuk"];
-                      const lomasuk=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["lokasi_longitude_masuk"];
+                     try{const lamasuk=snapshot.val()["lokasi_latitude_masuk"];
+                      const lomasuk=snapshot.val()["lokasi_longitude_masuk"];
                       if(lamasuk.isUndefined){
                           let textRowData5=document.createElement('td');
                       textRowData5.innerHTML="belum absensi masuk"
@@ -442,7 +374,7 @@ function inittable(obj=null,tahun,bulan,tanggal){
         textRowData5.addEventListener('click',function(){
                             window.open('http://maps.google.com/?q='+lamasuk+","+lomasuk, '_blank')})
            textRow.appendChild(textRowData5);
-                           if(lamasuk>=obj["loclamin"]&&lamasuk<=obj["loclapos"]&&lomasuk>=obj["loclongmin"]&&lomasuk<=obj["loclongpos"]){
+                           if(lamasuk>=loclamin&&lamasuk<=loclapos&&lomasuk>=loclongmin&&lomasuk<=loclongpos){
                                textRowData5.classList.add('text-success')
                            }else{
                               textRowData5.classList.add('text-danger')
@@ -450,12 +382,13 @@ function inittable(obj=null,tahun,bulan,tanggal){
                            }
             }
                   catch(e){
+
                       let textRowData5=document.createElement('td');
                       textRowData5.innerHTML="belum absensi masuk"
                       textRow.appendChild(textRowData5);
                   }
-                  try{const lakeluar=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["lokasi_latitude_keluar"];
-                      const lokeluar=obj["absensi"][tahun][bulan][tanggal][idcurrentanggota]["lokasi_longitude_keluar"];
+                  try{const lakeluar=snapshot.val()["lokasi_latitude_keluar"];
+                      const lokeluar=snapshot.val()["lokasi_longitude_keluar"];
                       if(lakeluar.isUndefined){
                           let textRowData6=document.createElement('td');
                       textRowData6.innerHTML="belum absensi keluar"
@@ -465,7 +398,7 @@ function inittable(obj=null,tahun,bulan,tanggal){
                             textRowData6.addEventListener('click',function(){
                             window.open('http://maps.google.com/?q='+lakeluar+","+lokeluar, '_blank')})
            textRow.appendChild(textRowData6);
-                           if(lakeluar>=obj["loclamin"]&&lakeluar<=obj["loclapos"]&&lokeluar>=obj["loclongmin"]&&lokeluar<=obj["loclongpos"]){
+                           if(lakeluar>=loclamin&&lakeluar<=loclapos&&lokeluar>=loclongmin&&lokeluar<=loclongpos){
                                textRowData6.classList.add('text-success')
                            }else{
                               textRowData6.classList.add('text-danger')
@@ -477,22 +410,24 @@ function inittable(obj=null,tahun,bulan,tanggal){
                       textRowData6.innerHTML="belum absensi keluar"
                       textRow.appendChild(textRowData6);
                   }
-            
-            
-
-            tbody.appendChild(textRow);
-                  
-                  
-              } else {
-                console.log("No data available");
-              }
-            }).catch((error) => {
-              console.error(error);
-            });
-            
-
-            
+                    tbody.appendChild(textRow);
+                    if(i===6){
+                        document.getElementById("totalwaktukerjamingguan").innerHTML=Math.floor(totalwaktukerjaminggu/3600000).toString().padStart(2, 0)+":"+Math.floor((totalwaktukerjaminggu/60000)%60).toString().padStart(2, 0)+":"+Math.round((totalwaktukerjaminggu/1000)%60).toString().padStart(2, 0);
+                        if(totalwaktukerjaminggu>=workhoursweek*3600000){
+                            document.getElementById("totalwaktukerjamingguan").classList.add('text-success')
+                        }
+                        else{
+                            document.getElementById("totalwaktukerjamingguan").classList.add('text-danger')
+                        }
+                    }
+                })
         }
-//    }
+    })
+    console.log(arrdate+listuid[selected[0]])
+    
+    console.log(datex)
+
 }
+
+
 
