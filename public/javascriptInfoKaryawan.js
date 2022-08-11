@@ -58,12 +58,19 @@ var theperusahaan=document.getElementById('namaperusahaan')
 
 console.log(readCookie("uid"))
 const uid=readCookie("uid")
+if(uid===""){
+    window.location.href='./index.html'
+    alert("Silakan Login Kembali")
+}
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
 //const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
 //const auid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
+//const uid="A7Cvy4o4fPci838vGXisfZebY9F2"
 const auid=readCookie("auid")
 //const auid="6fd7lptiRmNYtzmqxR55NoXFrTg2"
-//const auid="EYCoF2je5vRUCNxtCm2tTU9LLPj1"
+//const auid="TBfcILmvwqP6vBFhgwseFL12cxB2"
+//const auid="t9WUtAzCbngw8XB5sWwtvJVgMl73"
+//const auid="A7Cvy4o4fPci838vGXisfZebY9F2"
 
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
       if (snapshot.exists()) {
@@ -72,8 +79,10 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           console.log(snapshot.val()["user_name"])
           get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/nama_perusahaan`)).then((snapshot) => {
             if (snapshot.exists()) {
-                document.getElementById("namaperusahaan").innerHTML=snapshot.val()
-                console.log(snapshot.val())
+                if(snapshot.val()===""){
+                      document.getElementById("namaperusahaan").innerHTML="Perusahaan"
+                  }else{document.getElementById("namaperusahaan").innerHTML=snapshot.val()
+                  }
             }
           })
 
@@ -91,12 +100,12 @@ var theButton=document.getElementById('btnEdit')
                 theButton.innerHTML="Ok"
                 document.getElementById('myfield').disabled=false
                 hideshowinputupload()
-                hideshowhapus()
+//                hideshowhapus()
             }
             else{
                 theButton.innerHTML="Edit"
                 hideshowinputupload()
-                hideshowhapus()
+//                hideshowhapus()
                 document.getElementById('myfield').disabled=true
                 var myModal = new bootstrap.Modal(document.getElementById('exampleModal'))
                 myModal.show()
@@ -173,10 +182,19 @@ function loaddata(obj=null){
           document.getElementById("idanggota").innerHTML=snapshot.val()["anggota_perusahaan_id"]
           document.getElementById("emailanggota").innerHTML=snapshot.val()["email_user"]
           document.getElementById("inamaanggota").value=snapshot.val()["user_name"]
-          document.getElementById("alamat").value=snapshot.val()["alamat_user"]
-          document.getElementById("nomorhp").value=snapshot.val()["no_telepon_user"]
+          if(snapshot.val()["alamat_user"]===""||snapshot.val()["alamat_user"]===undefined){
+              document.getElementById("alamat").value="-"
+          }else{document.getElementById("alamat").value=snapshot.val()["alamat_user"]
+          }
+          if(snapshot.val()["no_telepon_user"]===undefined){
+              document.getElementById("nomorhp").value="0"
+          }else{document.getElementById("nomorhp").value=snapshot.val()["no_telepon_user"]
+          }
           get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/anggota/${snapshot.val()["anggota_perusahaan_id"]}`)).then((snapshot) => {
-            document.getElementById("bagian").value=snapshot.val()["bagian"]
+                if(snapshot.val()["bagian"]===undefined||snapshot.val()["bagian"]===""){
+                    document.getElementById("bagian").value="-"
+                }else{document.getElementById("bagian").value=snapshot.val()["bagian"]
+              }
               let timestamp=snapshot.val()["tanggal_masuk_perusahaan"]
           var date = new Date(timestamp);
            document.getElementById("tglmasuk").value=date.getDate().toString()+" "+mmonth[date.getMonth()]+" "+date.getFullYear().toString();
@@ -258,11 +276,11 @@ function hideshowinputupload() {
     
   
 }
-function hideshowhapus() {
-  let x = document.getElementById("hapus");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
-}
+//function hideshowhapus() {
+//  let x = document.getElementById("hapus");
+//  if (x.style.display === "none") {
+//    x.style.display = "block";
+//  } else {
+//    x.style.display = "none";
+//  }
+//}

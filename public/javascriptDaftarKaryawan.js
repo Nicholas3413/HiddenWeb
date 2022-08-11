@@ -59,18 +59,26 @@ var date = new Date();
 
 console.log(readCookie("uid"))
 const uid=readCookie("uid")
+if(uid===""){
+    window.location.href='./index.html'
+        alert("Silakan Login Kembali")
+}
 var theperusahaan=document.getElementById('namaperusahaan')
         theperusahaan.addEventListener('click',function(){
             createCookie("uid",uid,30)
         })
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
 //const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
+//const uid="A7Cvy4o4fPci838vGXisfZebY9F2"
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           if (snapshot.exists()) {
               console.log(snapshot.val()["user_name"]);
               document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/nama_perusahaan`)).then((snapshot) => {
-                  document.getElementById("namaperusahaan").innerHTML=snapshot.val()
+                  if(snapshot.val()===""){
+                      document.getElementById("namaperusahaan").innerHTML="Perusahaan"
+                  }else{document.getElementById("namaperusahaan").innerHTML=snapshot.val()
+                  }
               })
                get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/anggota`)).then((snapshot) => {
                   inittable(snapshot.val())
@@ -136,7 +144,11 @@ function inittable(obj=null){
               textRow.appendChild(textRowData3);
               
               let textRowData4=document.createElement('td');
-              let tempjabatan=obj[idcurrentanggota]["bagian"];
+              let baggg=obj[idcurrentanggota]["bagian"]
+              if(baggg===""||baggg===undefined){
+                  baggg="-"
+              }
+              let tempjabatan=baggg;
             textRowData4.innerHTML=tempjabatan;
               textRow.appendChild(textRowData4);
                 tbody.appendChild(textRow);

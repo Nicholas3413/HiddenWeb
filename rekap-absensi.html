@@ -74,9 +74,9 @@
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
           <span>Daftar Anggota</span>
         </h6>
-        <ul class="nav flex-column mb-2" id="daftaranggota">
-          
+        <ul class="nav flex-column mb-2" id="daftaranggota" style="color: black; background-color: white;">
         </ul>
+        <a href="javascript:window.print()" class="button print">Print Page</a>
       </div>
 <!--
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -86,9 +86,9 @@
 -->
  
     <div class="col-md-9">
-      <h1>Rekap Absensi <span id="sanggota"></span></h1>
-      <div class="table-responsive d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <table class="table table-striped table-sm">
+      <h1 style="margin-left: 200px;">Rekap Absensi <span id="sanggota"></span></h1>
+       <div class="table-responsive d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <table class="container table table-striped table-sm">
           <thead>
             <tr>
               <th scope="col">No. </th>
@@ -106,7 +106,7 @@
           <tfoot>
             <tr>
                 <th colspan="4" scope="row">Total Waktu Kerja Minggu Ini: </th>
-                <td id="totalwaktukerjamingguan">0</td>
+                <th colspan="4" scope="row" id="totalwaktukerjamingguan">00:00:00</th>
             </tr>
         </tfoot>
         </table>

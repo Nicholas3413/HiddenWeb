@@ -92,18 +92,26 @@ document.getElementById("datepicker").onchange = function(){
 };
 console.log(readCookie("uid"))
 const uid=readCookie("uid")
+if(uid===""){
+    window.location.href='./index.html'
+        alert("Silakan Login Kembali")
+}
 var theperusahaan=document.getElementById('namaperusahaan')
         theperusahaan.addEventListener('click',function(){
             createCookie("uid",uid,30)
         })
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
 //const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
+//const uid="A7Cvy4o4fPci838vGXisfZebY9F2"
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           if (snapshot.exists()) {
               console.log(snapshot.val()["user_name"]);
               document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/nama_perusahaan`)).then((snapshot) => {
-                  document.getElementById("namaperusahaan").innerHTML=snapshot.val()
+                  if(snapshot.val()===""){
+                      document.getElementById("namaperusahaan").innerHTML="Perusahaan"
+                  }else{document.getElementById("namaperusahaan").innerHTML=snapshot.val()
+                  }
               })
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}`)).then((snapshot) => {
                   jammasuk=snapshot.val()["jam_masuk"]
@@ -160,7 +168,11 @@ function initli(obj=null){
         listuid[i]=obj[Object.keys(obj)[i]]["user_id"]
         get(child(dbRef, `users/${obj[Object.keys(obj)[i]]["user_id"]}/user_name`)).then((snapshot) => {
             var li = document.createElement("li");
-            li.appendChild(document.createTextNode(snapshot.val()+" ("+obj[Object.keys(obj)[i]]["bagian"]+")"));
+            let objbagian=obj[Object.keys(obj)[i]]["bagian"]
+            if(objbagian===""){
+                objbagian="-"
+            }
+            li.appendChild(document.createTextNode(snapshot.val()+" ("+objbagian+")"));
             ul.appendChild(li);
             if(i+1===Object.keys(obj).length){
                 console.log(listuid)
@@ -282,76 +294,140 @@ function inittable(){
                       textRowData4.innerHTML="belum absensi keluar"
                       textRow.appendChild(textRowData4);
                   }
+//                    try{const timestamp=snapshot.val()["jam_masuk"];
+//                      const timestamp2=snapshot.val()["jam_keluar"];
+//                      var date = new Date(timestamp);
+//                      var date2 = new Date(timestamp2);
+//                      console.log(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
+//                      if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()<=jammasuk*3600+menitmasuk*60){
+//                          date=new Date(date.getYear(),date.getMonth(),date.getDate(),jammasuk,menitmasuk,0)
+//                          console.log("new date 1="+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
+//                      }
+//                      if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()>=jamkeluar*3600+menitkeluar*60){
+//                          date2=new Date(date2.getYear(),date2.getMonth(),date2.getDate(),jamkeluar,menitkeluar,0)
+//                          console.log("new date 2="+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds())
+//                      }
+//                      if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()<jammasuk*3600+menitmasuk*60){
+//                          date2=new Date(date2.getYear(),date2.getMonth(),date2.getDate(),jammasuk,menitmasuk,0)
+//                          console.log("new date 2="+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds())
+//                      }
+//                      if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()>jamkeluar*3600+menitkeluar*60){
+//                          date=new Date(date.getYear(),date.getMonth(),date.getDate(),jamkeluar,menitkeluar,0)
+//                          console.log("new date 1="+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
+//                      }
+//                      console.log(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
+//                      if(timestamp2>=timestamp){
+//                      if(timestamp===undefined){
+//                          let textRowData3a=document.createElement('td');
+//                      textRowData3a.innerHTML="belum absensi masuk"
+//                      textRow.appendChild(textRowData3a);
+//                          let textRowData3b=document.createElement('td');
+//                      textRowData3b.innerHTML="belum absensi masuk"
+//                      textRow.appendChild(textRowData3b);
+//                      }else if(timestamp2===undefined){
+//                          let textRowData3a=document.createElement('td');
+//                      textRowData3a.innerHTML="belum absensi keluar"
+//                      textRow.appendChild(textRowData3a);
+//                          let textRowData3b=document.createElement('td');
+//                      textRowData3b.innerHTML="belum absensi keluar"
+//                      textRow.appendChild(textRowData3b);
+//                      }
+//                      else{
+//                          var Difference_In_Time = date2.getTime() - date.getTime();
+//            
+//                          var surplustime=Difference_In_Time-workhoursday*3600000
+//                          let textRowData3b=document.createElement('td');
+//                          if(surplustime>0){
+//                              let textRowData3a=document.createElement('td');
+//                                Difference_In_Time=workhoursday*3600000
+//                              totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
+//            textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600000).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60000)%60).toString().padStart(2, 0)+":"+Math.round((Difference_In_Time/1000)%60).toString().padStart(2, 0);
+//                          textRow.appendChild(textRowData3a);
+//                              textRowData3b.innerHTML=Math.floor(surplustime/3600000).toString().padStart(2, 0)+":"+Math.floor((surplustime/60000)%60).toString().padStart(2, 0)+":"+Math.round((surplustime/1000)%60).toString().padStart(2, 0);
+//                          }else{
+//                              let textRowData3a=document.createElement('td');
+//                              totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
+//            textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600000).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60000)%60).toString().padStart(2, 0)+":"+Math.round((Difference_In_Time/1000)%60).toString().padStart(2, 0);
+//                          textRow.appendChild(textRowData3a);
+//                              textRowData3b.innerHTML="0"
+//                          }
+//                          
+//                      
+//                      textRow.appendChild(textRowData3b);
+//                          
+//                      }
+//                    }else{
+//                    let textRowData3b=document.createElement('td');
+//                      let textRowData3a=document.createElement('td');
+//                    textRowData3a.innerHTML="00:00:00"
+//                    textRow.appendChild(textRowData3a);
+//                    textRowData3b.innerHTML="00:00:00"
+//                      textRow.appendChild(textRowData3b);
+//                    }
+//                     }
                     try{const timestamp=snapshot.val()["jam_masuk"];
                       const timestamp2=snapshot.val()["jam_keluar"];
                       var date = new Date(timestamp);
                       var date2 = new Date(timestamp2);
-                      console.log(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
-                      if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()<=jammasuk*3600+menitmasuk*60){
+                      var Difference_In_Time=0
+                      console.log("date1: "+date)
+                      console.log("date2: "+date2)
+                      if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()<=jamkeluar*3600+menitkeluar*60){
+                          if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()>=jammasuk*3600+menitmasuk*60){
+                        if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()<=jammasuk*3600+menitmasuk*60){
                           date=new Date(date.getYear(),date.getMonth(),date.getDate(),jammasuk,menitmasuk,0)
                           console.log("new date 1="+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
-                      }
-                      if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()>=jamkeluar*3600+menitkeluar*60){
+                        }
+                        if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()>=jamkeluar*3600+menitkeluar*60){
                           date2=new Date(date2.getYear(),date2.getMonth(),date2.getDate(),jamkeluar,menitkeluar,0)
                           console.log("new date 2="+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds())
-                      }
-                      if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()<jammasuk*3600+menitmasuk*60){
-                          date2=new Date(date2.getYear(),date2.getMonth(),date2.getDate(),jammasuk,menitmasuk,0)
-                          console.log("new date 2="+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds())
-                      }
-                      if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()>jamkeluar*3600+menitkeluar*60){
-                          date=new Date(date.getYear(),date.getMonth(),date.getDate(),jamkeluar,menitkeluar,0)
-                          console.log("new date 1="+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
-                      }
-                      console.log(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
-                      if(timestamp2>=timestamp){
-                      if(timestamp===undefined){
+                        }
+                        if(timestamp<=timestamp2){
+                            Difference_In_Time = (date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()) - (date.getHours()*3600+date.getMinutes()*60+date.getSeconds());
+                            let textRowData3a=document.createElement('td');
+                            let textRowData3b=document.createElement('td');
+                            if(Difference_In_Time>workhoursday*3600){
+                                var sDifference_In_Time=Difference_In_Time-workhoursday*3600
+                                console.log("sdif: "+sDifference_In_Time)
+                                console.log("dif: "+Difference_In_Time)
+                                console.log("difw: "+workhoursday)
+                                Difference_In_Time=workhoursday*3600
+                                totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
+                                console.log("diffff: "+Difference_In_Time)
+                                textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60)%60).toString().padStart(2, 0)+":"+Math.round(Difference_In_Time%60).toString().padStart(2, 0);
+                                textRow.appendChild(textRowData3a);
+                                textRowData3b.innerHTML=Math.floor(sDifference_In_Time/3600).toString().padStart(2, 0)+":"+Math.floor((sDifference_In_Time/60)%60).toString().padStart(2, 0)+":"+Math.round(sDifference_In_Time%60).toString().padStart(2, 0);
+                            }else{
+                                textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60)%60).toString().padStart(2, 0)+":"+Math.round(Difference_In_Time%60).toString().padStart(2, 0);
+                                textRow.appendChild(textRowData3a);
+                                totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
+                                textRowData3b.innerHTML="0"
+                            }
+                            textRow.appendChild(textRowData3b);
+                        }else{
+                            let textRowData3a=document.createElement('td');
+                            textRowData3a.innerHTML="00:00:00"
+                            textRow.appendChild(textRowData3a);
+                            let textRowData3b=document.createElement('td');
+                            textRowData3b.innerHTML="00:00:00"
+                            textRow.appendChild(textRowData3b);
+                        }
+                      }else{
                           let textRowData3a=document.createElement('td');
-                      textRowData3a.innerHTML="belum absensi masuk"
-                      textRow.appendChild(textRowData3a);
-                          let textRowData3b=document.createElement('td');
-                      textRowData3b.innerHTML="belum absensi masuk"
-                      textRow.appendChild(textRowData3b);
-                      }else if(timestamp2===undefined){
+                            textRowData3a.innerHTML="00:00:00"
+                            textRow.appendChild(textRowData3a);
+                            let textRowData3b=document.createElement('td');
+                            textRowData3b.innerHTML="00:00:00"
+                            textRow.appendChild(textRowData3b);
+                      }
+                      }else{
                           let textRowData3a=document.createElement('td');
-                      textRowData3a.innerHTML="belum absensi keluar"
-                      textRow.appendChild(textRowData3a);
-                          let textRowData3b=document.createElement('td');
-                      textRowData3b.innerHTML="belum absensi keluar"
-                      textRow.appendChild(textRowData3b);
+                            textRowData3a.innerHTML="00:00:00"
+                            textRow.appendChild(textRowData3a);
+                            let textRowData3b=document.createElement('td');
+                            textRowData3b.innerHTML="00:00:00"
+                            textRow.appendChild(textRowData3b);
                       }
-                      else{
-                          var Difference_In_Time = date2.getTime() - date.getTime();
-            
-                          var surplustime=Difference_In_Time-workhoursday*3600000
-                          let textRowData3b=document.createElement('td');
-                          if(surplustime>0){
-                              let textRowData3a=document.createElement('td');
-                                Difference_In_Time=workhoursday*3600000
-                              totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
-            textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600000).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60000)%60).toString().padStart(2, 0)+":"+Math.round((Difference_In_Time/1000)%60).toString().padStart(2, 0);
-                          textRow.appendChild(textRowData3a);
-                              textRowData3b.innerHTML=Math.floor(surplustime/3600000).toString().padStart(2, 0)+":"+Math.floor((surplustime/60000)%60).toString().padStart(2, 0)+":"+Math.round((surplustime/1000)%60).toString().padStart(2, 0);
-                          }else{
-                              let textRowData3a=document.createElement('td');
-                              totalwaktukerjaminggu=totalwaktukerjaminggu+Difference_In_Time
-            textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600000).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60000)%60).toString().padStart(2, 0)+":"+Math.round((Difference_In_Time/1000)%60).toString().padStart(2, 0);
-                          textRow.appendChild(textRowData3a);
-                              textRowData3b.innerHTML="0"
-                          }
-                          
-                      
-                      textRow.appendChild(textRowData3b);
-                          
-                      }
-                    }else{
-                    let textRowData3b=document.createElement('td');
-                      let textRowData3a=document.createElement('td');
-                    textRowData3a.innerHTML="00:00:00"
-                    textRow.appendChild(textRowData3a);
-                    textRowData3b.innerHTML="00:00:00"
-                      textRow.appendChild(textRowData3b);
-                    }
                      }
                   catch(e){
 
@@ -412,8 +488,8 @@ function inittable(){
                   }
                     tbody.appendChild(textRow);
                     if(i===6){
-                        document.getElementById("totalwaktukerjamingguan").innerHTML=Math.floor(totalwaktukerjaminggu/3600000).toString().padStart(2, 0)+":"+Math.floor((totalwaktukerjaminggu/60000)%60).toString().padStart(2, 0)+":"+Math.round((totalwaktukerjaminggu/1000)%60).toString().padStart(2, 0);
-                        if(totalwaktukerjaminggu>=workhoursweek*3600000){
+                        document.getElementById("totalwaktukerjamingguan").innerHTML=Math.floor(totalwaktukerjaminggu/3600).toString().padStart(2, 0)+":"+Math.floor((totalwaktukerjaminggu/60)%60).toString().padStart(2, 0)+":"+Math.round(totalwaktukerjaminggu%60).toString().padStart(2, 0);
+                        if(totalwaktukerjaminggu>=workhoursweek*3600){
                             document.getElementById("totalwaktukerjamingguan").classList.add('text-success')
                         }
                         else{

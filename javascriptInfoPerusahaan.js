@@ -45,8 +45,14 @@ function createCookie(fieldname, fieldvalue, expiry) {
 
 console.log(readCookie("uid"))
 const uid=readCookie("uid")
+if(uid===""){
+    window.location.href='./index.html'
+        alert("Silakan Login Kembali")
+}
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
 //const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
+//const uid="TBfcILmvwqP6vBFhgwseFL12cxB2"
+//const uid="A7Cvy4o4fPci838vGXisfZebY9F2"
 
 loaddata(obj)
 var date = new Date();
@@ -148,7 +154,9 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
               console.log(snapshot.val()["user_name"])
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}`)).then((snapshot) => {
                   document.getElementById("namaperusahaan").innerHTML=snapshot.val()["nama_perusahaan"]
+                  if(snapshot.val()["gambar_perusahaan"]!==undefined){
                  document.getElementById("gambarperusahaan").src=snapshot.val()["gambar_perusahaan"]
+                  }
                   document.getElementById("txtnamaperusahaan").innerHTML=snapshot.val()["nama_perusahaan"]
                   document.getElementById("inamaperusahaan").value=snapshot.val()["nama_perusahaan"]
                   document.getElementById("alamat").value=snapshot.val()["alamat_perusahaan"]
