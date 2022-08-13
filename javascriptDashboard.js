@@ -68,16 +68,16 @@ document.getElementById("datepicker").value=date.getFullYear().toString() + '-' 
 document.getElementById("datepicker").onchange = function(){
     var date=document.getElementById("datepicker").value
     var arr1 = date.split('-');
-    console.log(arr1[2])
+//    console.log(arr1[2])
     let tbody = document.getElementById("dataabsensi");
       var rowCount = tbody.rows.length;
     for (var x=rowCount-1; x>=0; x--) {
        tbody.deleteRow(x);
     }
-    console.log(obj)
+//    console.log(obj)
     inittable(obj,arr1[0],arr1[1],arr1[2])
 };
-console.log(readCookie("uid"))
+//console.log(readCookie("uid"))
 const uid=readCookie("uid")
 if(uid===""){
 
@@ -86,14 +86,14 @@ if(uid===""){
 }
 var theperusahaan=document.getElementById('namaperusahaan')
         theperusahaan.addEventListener('click',function(){
-            createCookie("uid",uid,30)
+            createCookie("uid",uid,1)
         })
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
 //const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
 //const uid="A7Cvy4o4fPci838vGXisfZebY9F2"
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           if (snapshot.exists()) {
-              console.log(snapshot.val()["user_name"]);
+//              console.log(snapshot.val()["user_name"]);
               document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}`)).then((snapshot) => {
                   if(snapshot.val()["nama_perusahaan"]===""){
@@ -131,11 +131,11 @@ document.getElementById('signout').addEventListener('click',function(){
     });
 })
 document.getElementById('cekanggota').addEventListener('click',function(){
-    createCookieCekAnggota("uid",uid,30)
+    createCookieCekAnggota("uid",uid,1)
     window.location.href='./daftar-karyawan.html';
 })
 document.getElementById('rekapabsensi').addEventListener('click',function(){
-    createCookieRekap("uid",uid,30)
+    createCookieRekap("uid",uid,1)
     window.location.href='./rekap-absensi.html';
 })
 function expireAllCookies(name, paths) {
@@ -210,8 +210,8 @@ function inittable(obj=null,tahun,bulan,tanggal){
     let tbody = document.getElementById("dataabsensi");
 //    let tanggalharini=document.createElement('h2');
 //    let ulul=document.createElement('ul')
-    console.log(obj)
-    console.log(Object.keys(obj["anggota"]))
+//    console.log(obj)
+//    console.log(Object.keys(obj["anggota"]))
 //    console.log(obj["absensi"][tahun][bulan][tanggal]["AFyiZLp"]["jam_masuk"])
 
     //const obj={"16 May 2022":{"abc":{"jam_masuk":1652660802000},"abc2":{"jam_masuk":1652660922000},"abc3":{"jam_masuk":1652660982000}},
@@ -359,17 +359,17 @@ function inittable(obj=null,tahun,bulan,tanggal){
                       var date = new Date(timestamp);
                       var date2 = new Date(timestamp2);
                       var Difference_In_Time=0
-                      console.log("date1: "+date)
-                      console.log("date2: "+date2)
+//                      console.log("date1: "+date)
+//                      console.log("date2: "+date2)
                       if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()<=jamkeluar*3600+menitkeluar*60){
                           if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()>=jammasuk*3600+menitmasuk*60){
                         if(date.getHours()*3600+date.getMinutes()*60+date.getSeconds()<=jammasuk*3600+menitmasuk*60){
                           date=new Date(date.getYear(),date.getMonth(),date.getDate(),jammasuk,menitmasuk,0)
-                          console.log("new date 1="+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
+//                          console.log("new date 1="+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds())
                         }
                         if(date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()>=jamkeluar*3600+menitkeluar*60){
                           date2=new Date(date2.getYear(),date2.getMonth(),date2.getDate(),jamkeluar,menitkeluar,0)
-                          console.log("new date 2="+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds())
+//                          console.log("new date 2="+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds())
                         }
                         if(timestamp<=timestamp2){
                             Difference_In_Time = (date2.getHours()*3600+date2.getMinutes()*60+date2.getSeconds()) - (date.getHours()*3600+date.getMinutes()*60+date.getSeconds());
@@ -377,11 +377,11 @@ function inittable(obj=null,tahun,bulan,tanggal){
                             let textRowData3b=document.createElement('td');
                             if(Difference_In_Time>workhoursday*3600){
                                 var sDifference_In_Time=Difference_In_Time-workhoursday*3600
-                                console.log("sdif: "+sDifference_In_Time)
-                                console.log("dif: "+Difference_In_Time)
-                                console.log("difw: "+workhoursday)
+//                                console.log("sdif: "+sDifference_In_Time)
+//                                console.log("dif: "+Difference_In_Time)
+//                                console.log("difw: "+workhoursday)
                                 Difference_In_Time=workhoursday*3600
-                                console.log("diffff: "+Difference_In_Time)
+//                                console.log("diffff: "+Difference_In_Time)
                                 textRowData3a.innerHTML=Math.floor(Difference_In_Time/3600).toString().padStart(2, 0)+":"+Math.floor((Difference_In_Time/60)%60).toString().padStart(2, 0)+":"+Math.round(Difference_In_Time%60).toString().padStart(2, 0);
                                 textRow.appendChild(textRowData3a);
                                 textRowData3b.innerHTML=Math.floor(sDifference_In_Time/3600).toString().padStart(2, 0)+":"+Math.floor((sDifference_In_Time/60)%60).toString().padStart(2, 0)+":"+Math.round(sDifference_In_Time%60).toString().padStart(2, 0);

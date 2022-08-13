@@ -23,8 +23,8 @@ const dbRef = ref(getDatabase(app));
 get(child(dbRef, `timestamp`)).then((snapshot) => {
   if (snapshot.exists()) {
       var date = new Date(snapshot.val());
-      console.log(date)
-    console.log(snapshot.val());
+//      console.log(date)
+//    console.log(snapshot.val());
   } else {
     console.log("No data available");
   }
@@ -35,8 +35,8 @@ get(child(dbRef, `timestamp`)).then((snapshot) => {
 get(child(dbRef, `timestamp`)).then((snapshot) => {
   if (snapshot.exists()) {
       var date = new Date(snapshot.val());
-      console.log(date)
-    console.log(snapshot.val());
+//      console.log(date)
+//    console.log(snapshot.val());
   } else {
     console.log("No data available");
   }

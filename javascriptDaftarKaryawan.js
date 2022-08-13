@@ -57,7 +57,7 @@ function createCookieRekap(fieldname, fieldvalue, expiry) {
 
 var date = new Date();
 
-console.log(readCookie("uid"))
+//console.log(readCookie("uid"))
 const uid=readCookie("uid")
 if(uid===""){
     window.location.href='./index.html'
@@ -65,14 +65,14 @@ if(uid===""){
 }
 var theperusahaan=document.getElementById('namaperusahaan')
         theperusahaan.addEventListener('click',function(){
-            createCookie("uid",uid,30)
+            createCookie("uid",uid,1)
         })
 //const uid="Ex8iIGGzJ7O236Ml6bQ6KRxJktF3"
 //const uid="SGTZatShB7Q6ie3OxCtoJ0sc7Tr2"
 //const uid="A7Cvy4o4fPci838vGXisfZebY9F2"
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           if (snapshot.exists()) {
-              console.log(snapshot.val()["user_name"]);
+//              console.log(snapshot.val()["user_name"]);
               document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/nama_perusahaan`)).then((snapshot) => {
                   if(snapshot.val()===""){
@@ -102,7 +102,7 @@ document.getElementById('signout').addEventListener('click',function(){
     });
 })
 document.getElementById('rekapabsensi').addEventListener('click',function(){
-    createCookieRekap("uid",uid,30)
+    createCookieRekap("uid",uid,1)
     window.location.href='./rekap-absensi.html';
 })
 function expireAllCookies(name, paths) {
@@ -121,8 +121,8 @@ function expireAllCookies(name, paths) {
 
 function inittable(obj=null){
     let tbody = document.getElementById("dataanggota");
-    console.log(obj)
-    console.log(Object.keys(obj))
+//    console.log(obj)
+//    console.log(Object.keys(obj))
     for(let i=0;i<Object.keys(obj).length;i++){
         let idcurrentanggota=Object.keys(obj)[i]
         let textRow="row_"+(i+1);
@@ -155,8 +155,8 @@ function inittable(obj=null){
               
               let textRowData5=document.createElement('td');
             textRowData5.addEventListener('click',function(){
-                createCookieAnggota("auid",iduser,30)
-                createCookieAnggota("uid",uid,30)
+                createCookieAnggota("auid",iduser,1)
+                createCookieAnggota("uid",uid,1)
             window.open('./informasi-karyawan.html', '_blank')})
             textRowData5.innerHTML="Info";
               textRow.appendChild(textRowData5);

@@ -43,7 +43,7 @@ function createCookie(fieldname, fieldvalue, expiry) {
                       ";" + expires + ";path=/dashboard.html";
 }
 
-console.log(readCookie("uid"))
+//console.log(readCookie("uid"))
 const uid=readCookie("uid")
 if(uid===""){
     window.location.href='./index.html'
@@ -58,7 +58,7 @@ loaddata(obj)
 var date = new Date();
 document.getElementById("timepickermasuk").value=date.getHours().toString().padStart(2, 0) + ':' + date.getMinutes().toString().padStart(2, 0)
 hideshowinputupload()
-console.log(document.getElementById("timepickermasuk").value)
+//console.log(document.getElementById("timepickermasuk").value)
 var theButton=document.getElementById('btnEdit')
         theButton.addEventListener('click',function(){
             if(theButton.innerHTML==="Edit"){
@@ -101,6 +101,25 @@ var theButton=document.getElementById('btnEdit')
                           updates['/perusahaan/' +snapshot.val()+ '/menit_masuk'] = masuk[1]                          
                           updates['/perusahaan/' +snapshot.val()+ '/jam_pulang'] = keluar[0]
                           updates['/perusahaan/' +snapshot.val()+ '/menit_pulang'] = keluar[1]
+                          let slokasi = document.getElementById("lokasi").value.split(',')
+                        try{
+//                            if(slokasi[2]!==""){
+//                                
+//                            }else{
+//                                
+//                            }
+                            
+                            if(slokasi[1]!==""){
+                                if(isNumber(slokasi[0]) && isNumber(slokasi[1])){
+                                    updates['/perusahaan/' +snapshot.val()+ '/loclatitude'] = slokasi[0]
+                                    updates['/perusahaan/' +snapshot.val()+ '/loclongitude'] = slokasi[1]
+                                }else{
+                                    
+                                }
+                            }
+                        }catch(e){
+                            
+                        }
                           if(document.getElementById("upload").value.toString()!=""){
                               const storage = getStorage();
                             const storageRef = refx(storage, "perusahaan/"+uid+"/gambar.jpg");
@@ -127,7 +146,7 @@ var theButton=document.getElementById('btnEdit')
                                 // Handle successful uploads on complete
                                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                  console.log('File available at', downloadURL);
+//                                  console.log('File available at', downloadURL);
                                     updates['/perusahaan/' +snapshot.val()+ '/gambar_perusahaan']=downloadURL
                                     update(ref(db), updates);
                                 });
@@ -148,10 +167,10 @@ var theButton=document.getElementById('btnEdit')
 function loaddata(obj=null){
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
           if (snapshot.exists()) {
-              console.log(snapshot.val()["user_name"]);
+//              console.log(snapshot.val()["user_name"]);
               document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
               document.getElementById("inamapemilik").value=snapshot.val()["user_name"]
-              console.log(snapshot.val()["user_name"])
+//              console.log(snapshot.val()["user_name"])
               get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}`)).then((snapshot) => {
                   document.getElementById("namaperusahaan").innerHTML=snapshot.val()["nama_perusahaan"]
                   if(snapshot.val()["gambar_perusahaan"]!==undefined){
@@ -173,7 +192,7 @@ get(child(dbRef, `users/${uid}`)).then((snapshot) => {
                   
 
                   obj=snapshot.val()
-                  console.log(obj)
+//                  console.log(obj)
               })
           } else {
             console.log("No data available");
@@ -188,7 +207,7 @@ var theLokasi=document.getElementById('btnLokasi')
             window.open('http://maps.google.com/?q='+document.getElementById('lokasi').value, '_blank')
         })
 
-
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
 function hideshowinputupload() {
   let x = document.getElementById("upload");
   if (x.style.display === "none") {

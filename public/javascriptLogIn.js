@@ -23,8 +23,8 @@ const dbRef = ref(getDatabase(app));
 get(child(dbRef, `timestamp`)).then((snapshot) => {
   if (snapshot.exists()) {
       var date = new Date(snapshot.val());
-      console.log(date)
-    console.log(snapshot.val());
+//      console.log(date)
+//    console.log(snapshot.val());
   } else {
     console.log("No data available");
   }
@@ -33,13 +33,13 @@ get(child(dbRef, `timestamp`)).then((snapshot) => {
 });
 const etxtemail=document.getElementById('etxtemail')
 const etxtpassword=document.getElementById('etxtpassword')
-console.log(etxtemail,etxtpassword)
+//console.log(etxtemail,etxtpassword)
 
 get(child(dbRef, `timestamp`)).then((snapshot) => {
   if (snapshot.exists()) {
       var date = new Date(snapshot.val());
-      console.log(date)
-    console.log(snapshot.val());
+//      console.log(date)
+//    console.log(snapshot.val());
   } else {
     console.log("No data available");
   }
@@ -49,13 +49,13 @@ get(child(dbRef, `timestamp`)).then((snapshot) => {
 
 //remember me
 const uid=readCookie("uid");
-console.log("cek "+uid)
+//console.log("cek "+uid)
 if(uid!==""){
     get(child(dbRef, `users/${uid}/user_role`)).then((snapshot) => {
       if (snapshot.val()==="pemilik") {
-          console.log(snapshot.val());
-          console.log("Selamat datang");
-          createCookie("uid",uid,30)
+//          console.log(snapshot.val());
+//          console.log("Selamat datang");
+          createCookie("uid",uid,1)
           window.location.href='./dashboard.html';
       } else {
 
@@ -86,20 +86,20 @@ var theButton=document.getElementById('btnEmail')
               .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
-                console.log("signed in");
+//                console.log("signed in");
                 onAuthStateChanged(auth, (user) => {
                   if (user) {
                     const uid = user.uid;
                       
-                      console.log(uid)
+//                      console.log(uid)
                     get(child(dbRef, `users/${uid}/user_role`)).then((snapshot) => {
                       if (snapshot.val()==="pemilik") {
                           if (document.getElementById('rememberme').checked) {
-                                createCookieLogin("uid",uid,30)
+                                createCookieLogin("uid",uid,1)
                             }
-                          console.log(snapshot.val());
-                          console.log("Selamat datang");
-                          createCookie("uid",uid,30)
+//                          console.log(snapshot.val());
+//                          console.log("Selamat datang");
+                          createCookie("uid",uid,1)
 //                          window.open('dashboard.html');
                           window.location.href='./dashboard.html';
                       } else {

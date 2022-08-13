@@ -17,7 +17,7 @@ const firebaseConfig = {
   };
 
 const app = initializeApp(firebaseConfig);
-console.log(app.name)
+//console.log(app.name)
 const dbRef = ref(getDatabase(app));
 var obj={}
 const mmonth=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","Nopember","Desember"]
@@ -53,10 +53,10 @@ function createCookiePerusahaan(fieldname, fieldvalue, expiry) {
 }
 var theperusahaan=document.getElementById('namaperusahaan')
         theperusahaan.addEventListener('click',function(){
-            createCookiePerusahaan("uid",uid,30)
+            createCookiePerusahaan("uid",uid,1)
         })
 
-console.log(readCookie("uid"))
+//console.log(readCookie("uid"))
 const uid=readCookie("uid")
 if(uid===""){
     window.location.href='./index.html'
@@ -74,9 +74,9 @@ const auid=readCookie("auid")
 
 get(child(dbRef, `users/${uid}`)).then((snapshot) => {
       if (snapshot.exists()) {
-          console.log(snapshot.val()["user_name"]);
+//          console.log(snapshot.val()["user_name"]);
           document.getElementById("namapemilik").innerHTML=snapshot.val()["user_name"]
-          console.log(snapshot.val()["user_name"])
+//          console.log(snapshot.val()["user_name"])
           get(child(dbRef, `perusahaan/${snapshot.val()["perusahaan_id"]}/nama_perusahaan`)).then((snapshot) => {
             if (snapshot.exists()) {
                 if(snapshot.val()===""){
@@ -153,7 +153,7 @@ var theButton=document.getElementById('btnEdit')
                                 // Handle successful uploads on complete
                                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                  console.log('File available at', downloadURL);
+//                                  console.log('File available at', downloadURL);
                                     updates['/users/' +auid+ '/gambar_user']=downloadURL
                                     update(ref(db), updates);
                                 });
